@@ -1,21 +1,30 @@
 var createError = require('http-errors');
 var express = require('express');
-var path = require('path');
-const bodyParser = require("body-parser");
 const handlebars = require("express-handlebars");
-// const mongoose = require("mongoose");
-
+const mongoose = require("mongoose");
+const bodyParser = require("body-parser");
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
 var app = express();
 
-// view engine setup
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.set('view engine', 'hbs');
+app.engine('hbs', handlebars({
+    layoutsDir: __dirname + '/views/layouts',
+    extname: 'hbs',
+    defaultLayout: 'index'
+}));
 
-app.engine('handlebars', handlebars({ defaultLayout: 'main' }));
-app.set('view engine', 'handlebars');
+mongoose.promise = global.Promise;
+mongoose.connect("mongodb://localhost/projetaonode").then(() => {
+    console.log("Mongo Conectado!");
+}).catch(err => {
+    console.log("Algo deu errado" + err);
+})
+
+app.use(express.static('public'))
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
