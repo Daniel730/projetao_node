@@ -1,12 +1,10 @@
-var createError = require('http-errors');
-var express = require('express');
+const express = require('express');
 const handlebars = require("express-handlebars");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+const indexRouter = require('./routes/index');
 
-var app = express();
+const app = express();
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -27,11 +25,7 @@ mongoose.connect("mongodb://localhost/projetaonode").then(() => {
 app.use(express.static('public'))
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
-
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-    next(createError(404));
-});
-
+app.use((req, res) => {
+    res.status(404).render('404', { title: '404 PAGE NOT FOUND' })
+})
 module.exports = app;
